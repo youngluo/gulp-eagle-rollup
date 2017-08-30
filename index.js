@@ -1,7 +1,10 @@
 const through = require('through2');
 const path = require('path');
 const { PluginError } = require('gulp-util');
+const applySourceMap = require('vinyl-sourcemaps-apply');
 let rollup = require('rollup');
+
+const PLUGIN_NAME = 'gulp-eagle-rollup';
 
 module.exports = options => (
   through.obj(function (file, enc, cb) {
@@ -10,7 +13,7 @@ module.exports = options => (
     }
 
     if (file.isStream()) {
-      return this.emit('error', PluginError('gulp-eagle-rollup', 'Streaming not supported'));
+      return this.emit('error', PluginError(PLUGIN_NAME, 'Streaming not supported'));
     }
 
     options.input = path.relative(file.cwd, file.path);
@@ -18,19 +21,33 @@ module.exports = options => (
     rollup = options.rollup || rollup;
     delete options.rollup;
 
+    const createSourceMap = file.sourceMap !== undefined;
+    let generateOptions = options.output;
+
+    generateOptions.sourcemap = createSourceMap;
+
     rollup
       .rollup(options)
       .then(bundle => {
         this.emit('bundle', bundle);
 
-        return bundle.generate(options.output);
+        return bundle.generate(generateOptions);
       })
       .then(result => {
-        const { code } = result;
+        const { code, map } = result;
+
+        if (createSourceMap) {
+          map.file = options.input;
+          map.sources = map.sources.map(source => path.relative(file.cwd, source));
+          applySourceMap(file, map);
+        }
 
         file.contents = new Buffer(code);
 
         cb(null, file);
+      })
+      .catch(err => {
+        cb(PluginError(PLUGIN_NAME, err));
       });
   })
 );
