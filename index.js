@@ -13,7 +13,7 @@ module.exports = options => (
     }
 
     if (file.isStream()) {
-      return this.emit('error', PluginError(PLUGIN_NAME, 'Streaming not supported'));
+      return this.emit('error', new PluginError(PLUGIN_NAME, 'Streaming not supported'));
     }
 
     options.input = path.relative(file.cwd, file.path);
@@ -47,7 +47,7 @@ module.exports = options => (
         cb(null, file);
       })
       .catch(err => {
-        cb(PluginError(PLUGIN_NAME, err));
+        cb(new PluginError(PLUGIN_NAME, err));
       });
   })
 );
