@@ -33,8 +33,9 @@ gulp.task('default', function () {
 
 ## Options
 
-`eagleRollup(rollupOptions)`
+`eagleRollup(rollupOptions, fileName)`
 
 - `rollupOptions` - the same object as `rollup.rollup(options)`. And you can specify rollup by `rollupOptions.rollup`.
+- `fileName` - a new file name.
 
 

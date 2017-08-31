@@ -16,6 +16,6 @@ gulp.task('default', function () {
         commonjs(),
         buble()
       ]
-    }))
-    .pipe(gulp.dest('./dist'));
+    }, 'app.js'))
+    .pipe(gulp.dest('./dist/js'));
 });

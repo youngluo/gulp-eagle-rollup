@@ -6,7 +6,7 @@ let rollup = require('rollup');
 
 const PLUGIN_NAME = 'gulp-eagle-rollup';
 
-module.exports = options => (
+module.exports = (options, fileName) => (
   through.obj(function (file, enc, cb) {
     if (file.isNull()) {
       return;
@@ -40,6 +40,10 @@ module.exports = options => (
           map.file = options.input;
           map.sources = map.sources.map(source => path.relative(file.cwd, source));
           applySourceMap(file, map);
+        }
+
+        if (fileName) {
+          file.path = path.resolve(file.base, fileName);
         }
 
         file.contents = new Buffer(code);

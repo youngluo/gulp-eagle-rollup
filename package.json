@@ -1,6 +1,6 @@
 {
   "name": "gulp-eagle-rollup",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A Gulp plugin for Rollup",
   "main": "index.js",
   "scripts": {
